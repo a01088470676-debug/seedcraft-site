@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myBTC — SeedCraft 플러그인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0e1513;
+    --bg-alt: #121b18;
+    --surface: #16211d;
+    --surface-2: #1b2823;
+    --line: #24352e;
+    --text: #e9f2ec;
+    --text-muted: #8ea89c;
+    --text-dim: #5c7268;
+    --seed: #5cffa0;
+    --seed-dim: #2e9a63;
+    --gold: #f2b33d;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(92,255,160,0.08), transparent),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(242,179,61,0.05), transparent);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width: 1040px; margin:0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav{ position:sticky; top:0; z-index:50; backdrop-filter: blur(10px); background: rgba(14,21,19,0.75); border-bottom: 1px solid var(--line); }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size:18px; letter-spacing:-0.02em; }
+  .brand-mark{ width:26px; height:26px; border-radius:7px; background: linear-gradient(145deg, var(--seed), var(--seed-dim)); display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .back-link{ font-size:14px; color:var(--text-muted); display:flex; align-items:center; gap:6px; }
+  .back-link:hover{ color:var(--seed); }
+
+  /* HERO */
+  .hero{ padding: 72px 0 56px; border-bottom: 1px solid var(--line); }
+  .hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap; margin-bottom:22px; }
+  .badge{
+    font-family: var(--font-mono); font-size:11px; letter-spacing:0.04em;
+    padding: 4px 9px; border-radius: 20px;
+    background: rgba(92,255,160,0.12); color: var(--seed); border:1px solid var(--seed-dim);
+    display:inline-block;
+  }
+  .product-icon-lg{ font-size:44px; margin-bottom:14px; }
+  h1.title{
+    font-family: var(--font-display); font-weight:700;
+    font-size: clamp(32px, 5vw, 46px);
+    line-height:1.1; letter-spacing:-0.03em; margin-bottom:14px;
+  }
+  .lede{ color: var(--text-muted); font-size:16px; max-width:520px; margin-bottom:28px; }
+  .price-box{
+    background: var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:22px 26px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  .price-box .price{ font-family: var(--font-display); font-size:28px; color:var(--seed); font-weight:700; }
+  .price-box .price-note{ font-family: var(--font-mono); font-size:12px; color:var(--text-dim); margin-top:4px; }
+  .cta-row{ display:flex; gap:12px; flex-wrap:wrap; }
+  .btn{
+    font-family: var(--font-body); font-weight:600; font-size:14px;
+    padding:13px 22px; border-radius:8px; border:1px solid transparent; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{ background: var(--seed); color:#06110c; }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow:0 8px 24px rgba(92,255,160,0.25); }
+  .btn-ghost{ background: transparent; border-color: var(--line); color: var(--text); }
+  .btn-ghost:hover{ border-color: var(--seed); color: var(--seed); }
+
+  /* SECTIONS */
+  section{ padding:64px 0; border-bottom:1px solid var(--line); }
+  .section-head{ margin-bottom:36px; max-width:560px; }
+  .kicker{ font-family: var(--font-mono); font-size:12px; color: var(--gold); letter-spacing:0.1em; margin-bottom:10px; }
+  h2{ font-family: var(--font-display); font-size: clamp(24px,3.2vw,30px); letter-spacing:-0.02em; margin-bottom:12px; }
+  .section-head p{ color: var(--text-muted); font-size:15px; }
+
+  /* FEATURES */
+  .features{ display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; }
+  @media (max-width:700px){ .features{ grid-template-columns:1fr; } }
+  .feature{ background: var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .feature .icon{ font-size:20px; margin-bottom:10px; }
+  .feature h3{ font-size:15px; font-weight:600; margin-bottom:6px; }
+  .feature p{ color: var(--text-muted); font-size:13px; }
+
+  /* PURCHASE */
+  .steps{ display:flex; flex-direction:column; margin-bottom:32px; }
+  .step{ display:grid; grid-template-columns:64px 1fr; gap:20px; padding:22px 0; border-top:1px solid var(--line); }
+  .step:last-child{ border-bottom:1px solid var(--line); }
+  .step-idx{ font-family: var(--font-mono); color: var(--text-dim); font-size:13px; padding-top:3px; }
+  .step h3{ font-size:16px; font-weight:600; margin-bottom:6px; }
+  .step p{ color: var(--text-muted); font-size:14px; }
+  .payment-box{
+    background: var(--surface-2); border:1px dashed var(--gold); border-radius:12px;
+    padding:22px 26px; font-family: var(--font-mono); font-size:14px; color: var(--text);
+  }
+  .payment-box .label{ color: var(--gold); font-size:12px; letter-spacing:0.08em; margin-bottom:8px; display:block; }
+
+  /* FAQ */
+  .faq{ display:flex; flex-direction:column; gap:1px; background: var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .faq-item{ background: var(--surface); padding:20px 24px; }
+  .faq-item h3{ font-size:14px; font-weight:600; margin-bottom:6px; }
+  .faq-item p{ color: var(--text-muted); font-size:13px; }
+
+  /* FOOTER */
+  footer{ padding:64px 0 40px; }
+  .cta-final{ text-align:center; padding:48px 24px; background: var(--surface); border:1px solid var(--line); border-radius:16px; margin-bottom:44px; }
+  .cta-final h2{ margin-bottom:10px; }
+  .cta-final p{ color: var(--text-muted); margin-bottom:24px; }
+  .foot-meta{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color: var(--text-dim); flex-wrap:wrap; gap:12px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark">🌱</span> SeedCraft</div>
+    <a href="index.html" class="back-link">← 전체 플러그인 보기</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <div>
+        <div class="product-icon-lg">🪙</div>
+        <span class="badge">판매중</span>
+      </div>
+    </div>
+    <h1 class="title">myBTC</h1>
+    <p class="lede">Vault 기반 서버 경제에 가상 암호화폐·주식 거래 시스템을 더하는 플러그인입니다. 시세가 실시간으로 움직이고, 명령어와 GUI 모두 한국어로 완벽 지원됩니다.</p>
+    <div class="price-box">
+      <div>
+        <div class="price">12,000원</div>
+        <div class="price-note">1회 결제 · 업데이트 무료 제공</div>
+      </div>
+      <div class="cta-row">
+        <a href="#purchase" class="btn btn-primary">구매하기</a>
+        <!-- TODO: 디스코드 초대 링크를 여기에 넣어주세요 (예: https://discord.gg/xxxxxxx) -->
+        <a href="여기에_디스코드_초대_링크_입력" class="btn btn-ghost">문의하기</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">FEATURES</div>
+      <h2>myBTC가 하는 일</h2>
+      <p>Vault를 그대로 활용해서, 기존 경제 플러그인과 충돌 없이 얹을 수 있습니다.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="icon">💹</div>
+        <h3>실시간 시세 변동</h3>
+        <p>가상 코인의 가격이 서버 내 거래량에 따라 자동으로 오르내립니다.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">📈</div>
+        <h3>주식 거래 시스템</h3>
+        <p>플레이어가 직접 주식을 사고팔며 서버 경제에 참여할 수 있습니다.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🧭</div>
+        <h3>Vault 완전 연동</h3>
+        <p>기존 서버의 화폐(Vault Economy)와 자연스럽게 함께 동작합니다.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🇰🇷</div>
+        <h3>한국어 완벽 지원</h3>
+        <p>명령어 안내, GUI, 에러 메시지까지 전부 한국어로 표시됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="purchase">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">HOW TO BUY</div>
+      <h2>구매는 이렇게 진행돼요</h2>
+      <p>현재는 수동 결제 방식으로 판매하고 있습니다. 아래 순서대로 진행해주세요.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-idx">01</div>
+        <div><h3>아래 결제 정보로 12,000원 송금</h3><p>송금자명을 디스코드 닉네임과 동일하게 남겨주시면 확인이 빨라집니다.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-idx">02</div>
+        <div><h3>디스코드에서 입금 확인 요청</h3><p>구매 채널이나 DM으로 송금 캡처와 닉네임을 보내주세요.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-idx">03</div>
+        <div><h3>파일 수령 및 역할 부여</h3><p>확인 후 DM으로 플러그인 파일이 전달되고, 구매자 역할이 부여됩니다.</p></div>
+      </div>
+    </div>
+    <div class="payment-box">
+      <span class="label">PAYMENT INFO</span>
+      [ 카카오페이 링크 또는 계좌번호를 여기에 입력하세요 ]
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">FAQ</div>
+      <h2>자주 묻는 질문</h2>
+    </div>
+    <div class="faq">
+      <div class="faq-item">
+        <h3>설치는 어떻게 하나요?</h3>
+        <p>받은 jar 파일을 서버의 plugins 폴더에 넣고 재시작하면 됩니다. 자세한 설치 안내는 파일과 함께 전달됩니다.</p>
+      </div>
+      <div class="faq-item">
+        <h3>환불이 가능한가요?</h3>
+        <p>파일 전달 전에는 언제든 환불 가능합니다. 파일 전달 후에는 정상 작동하지 않는 경우에 한해 환불해드립니다.</p>
+      </div>
+      <div class="faq-item">
+        <h3>업데이트는 어떻게 받나요?</h3>
+        <p>구매자 역할이 있으면 디스코드 공지 채널에서 새 버전 안내와 파일을 계속 받아보실 수 있습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="cta-final">
+      <h2>구매 전 궁금한 점이 있나요?</h2>
+      <p>디스코드에서 개발자에게 바로 물어보세요.</p>
+      <!-- TODO: 디스코드 초대 링크를 여기에 넣어주세요 (예: https://discord.gg/xxxxxxx) -->
+      <a href="여기에_디스코드_초대_링크_입력" class="btn btn-primary">디스코드 참여하기 →</a>
+    </div>
+    <div class="foot-meta">
+      <span>🌱 SeedCraft</span>
+      <span><a href="index.html">← 전체 플러그인 보기</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

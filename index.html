@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeedCraft — 마인크래프트 플러그인 스토어</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0e1513;
+    --bg-alt: #121b18;
+    --surface: #16211d;
+    --surface-2: #1b2823;
+    --line: #24352e;
+    --text: #e9f2ec;
+    --text-muted: #8ea89c;
+    --text-dim: #5c7268;
+    --seed: #5cffa0;
+    --seed-dim: #2e9a63;
+    --gold: #f2b33d;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(92,255,160,0.08), transparent),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(242,179,61,0.05), transparent);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width: 1040px; margin:0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav{ position:sticky; top:0; z-index:50; backdrop-filter: blur(10px); background: rgba(14,21,19,0.75); border-bottom: 1px solid var(--line); }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight:700; font-size:18px; letter-spacing:-0.02em; }
+  .brand-mark{ width:26px; height:26px; border-radius:7px; background: linear-gradient(145deg, var(--seed), var(--seed-dim)); display:flex; align-items:center; justify-content:center; font-size:14px; }
+  nav .links{ display:flex; gap:28px; font-size:14px; color:var(--text-muted); }
+  nav .links a:hover{ color:var(--seed); }
+  @media (max-width:640px){ nav .links{ display:none; } }
+
+  /* HERO */
+  .hero{ padding: 96px 0 72px; border-bottom: 1px solid var(--line); text-align:center; }
+  .eyebrow{
+    font-family: var(--font-mono); font-size:12px; letter-spacing:0.14em; color: var(--seed);
+    display:inline-flex; align-items:center; gap:8px; margin-bottom:22px;
+  }
+  .eyebrow::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--seed); box-shadow:0 0 8px var(--seed); }
+  h1.title{
+    font-family: var(--font-display); font-weight:700;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height:1.05; letter-spacing:-0.03em; margin-bottom:20px;
+  }
+  h1.title .accent{ color: var(--seed); }
+  .lede{ color: var(--text-muted); font-size:17px; max-width:520px; margin:0 auto 34px; }
+  .cta-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn{
+    font-family: var(--font-body); font-weight:600; font-size:14px;
+    padding:13px 22px; border-radius:8px; border:1px solid transparent; cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary{ background: var(--seed); color:#06110c; }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow:0 8px 24px rgba(92,255,160,0.25); }
+  .btn-ghost{ background: transparent; border-color: var(--line); color: var(--text); }
+  .btn-ghost:hover{ border-color: var(--seed); color: var(--seed); }
+
+  /* GROWTH DIAGRAM (signature) */
+  .growth{ margin-top: 56px; }
+  svg.growth-svg{ width:100%; max-width:640px; height:150px; display:block; margin:0 auto; overflow:visible; }
+  .stem{ stroke: var(--seed-dim); stroke-width:2; stroke-dasharray: 300; stroke-dashoffset:300; animation: draw 1.4s ease-out forwards; }
+  .node{ opacity:0; animation: pop 500ms ease forwards; }
+  .node circle{ fill: var(--surface); stroke: var(--seed); stroke-width:2; }
+  .node text{ font-family: var(--font-mono); font-size:11px; fill: var(--text-muted); }
+  .node.active circle{ fill: var(--seed); }
+  .node.active text{ fill: var(--text); }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes pop{ from{ opacity:0; transform: scale(0.6); } to{ opacity:1; transform:scale(1); } }
+  @media (prefers-reduced-motion: reduce){ .stem, .node{ animation:none !important; opacity:1; stroke-dashoffset:0; } }
+
+  /* SECTIONS */
+  section{ padding:72px 0; border-bottom:1px solid var(--line); }
+  .section-head{ margin-bottom:40px; max-width:560px; }
+  .kicker{ font-family: var(--font-mono); font-size:12px; color: var(--gold); letter-spacing:0.1em; margin-bottom:10px; }
+  h2{ font-family: var(--font-display); font-size: clamp(26px,3.4vw,34px); letter-spacing:-0.02em; margin-bottom:12px; }
+  .section-head p{ color: var(--text-muted); font-size:15px; }
+
+  /* PRODUCT GRID */
+  .products{ display:grid; grid-template-columns: repeat(2, 1fr); gap:20px; }
+  @media (max-width:700px){ .products{ grid-template-columns:1fr; } }
+  .product{
+    background: var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding: 26px; display:flex; flex-direction:column; gap:14px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .product.live:hover{ border-color: var(--seed-dim); transform: translateY(-2px); }
+  .product-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .product-icon{ font-size:26px; }
+  .badge{
+    font-family: var(--font-mono); font-size:11px; letter-spacing:0.04em;
+    padding: 4px 9px; border-radius: 20px;
+  }
+  .badge.live{ background: rgba(92,255,160,0.12); color: var(--seed); border:1px solid var(--seed-dim); }
+  .badge.soon{ background: rgba(142,168,156,0.1); color: var(--text-dim); border:1px solid var(--line); }
+  .product h3{ font-family: var(--font-display); font-size:19px; letter-spacing:-0.01em; }
+  .product p{ color: var(--text-muted); font-size:14px; flex-grow:1; }
+  .product-foot{ display:flex; justify-content:space-between; align-items:center; font-family: var(--font-mono); font-size:13px; }
+  .product-foot .price{ color: var(--seed); }
+  .product-foot .link{ color: var(--text-dim); }
+  .product.live .product-foot .link:hover{ color: var(--seed); }
+  .product.soon{ opacity: 0.55; }
+
+  /* PROCESS */
+  .steps{ display:flex; flex-direction:column; }
+  .step{ display:grid; grid-template-columns:64px 1fr; gap:20px; padding:22px 0; border-top:1px solid var(--line); }
+  .step:last-child{ border-bottom:1px solid var(--line); }
+  .step-idx{ font-family: var(--font-mono); color: var(--text-dim); font-size:13px; padding-top:3px; }
+  .step h3{ font-size:16px; font-weight:600; margin-bottom:6px; }
+  .step p{ color: var(--text-muted); font-size:14px; }
+
+  /* WHY */
+  .why-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:1px; background: var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  @media (max-width:700px){ .why-grid{ grid-template-columns:1fr; } }
+  .why{ background: var(--surface); padding:24px; }
+  .why .tag{ font-family: var(--font-mono); font-size:12px; color: var(--seed); margin-bottom:10px; }
+  .why .tag::before{ content:'> '; color: var(--text-dim); }
+  .why h3{ font-size:15px; font-weight:600; margin-bottom:6px; }
+  .why p{ color: var(--text-muted); font-size:13px; }
+
+  /* FOOTER */
+  footer{ padding:64px 0 40px; }
+  .cta-final{ text-align:center; padding:48px 24px; background: var(--surface); border:1px solid var(--line); border-radius:16px; margin-bottom:44px; }
+  .cta-final h2{ margin-bottom:10px; }
+  .cta-final p{ color: var(--text-muted); margin-bottom:24px; }
+  .foot-meta{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color: var(--text-dim); flex-wrap:wrap; gap:12px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark">🌱</span> SeedCraft</div>
+    <div class="links">
+      <a href="#products">플러그인</a>
+      <a href="#process">구매 방법</a>
+      <a href="#why">소개</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">MINECRAFT PLUGIN STUDIO</div>
+    <h1 class="title">작은 씨앗이 자라나<br><span class="accent">서버를 바꿉니다</span></h1>
+    <p class="lede">SeedCraft는 마인크래프트 서버를 위한 플러그인을 만들고 판매합니다. 경제 시스템부터 시작해서 앞으로 다양한 도구까지, 하나씩 차근차근 키워갑니다.</p>
+    <div class="cta-row">
+      <a href="#products" class="btn btn-primary">플러그인 둘러보기</a>
+      <!-- TODO: 디스코드 초대 링크를 여기에 넣어주세요 (예: https://discord.gg/xxxxxxx) -->
+      <a href="여기에_디스코드_초대_링크_입력" class="btn btn-ghost">디스코드 참여하기 →</a>
+    </div>
+
+    <div class="growth">
+      <svg class="growth-svg" viewBox="0 0 640 150">
+        <path class="stem" d="M 320 150 L 320 90 Q 320 70 280 55 M 320 90 Q 320 70 360 55 M 320 90 L 320 40" fill="none"/>
+        <g class="node active" style="animation-delay:1.1s"><circle cx="320" cy="30" r="16"/><text x="320" y="34" text-anchor="middle">🌱</text></g>
+        <g class="node active" style="animation-delay:1.3s"><circle cx="270" cy="48" r="22"/><text x="270" y="52" text-anchor="middle">myBTC</text></g>
+        <g class="node" style="animation-delay:1.5s"><circle cx="370" cy="48" r="22"/><text x="370" y="52" text-anchor="middle">준비중</text></g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<section id="products">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">PRODUCTS</div>
+      <h2>하나씩 늘어가는 것들</h2>
+      <p>천천히 만들어가는 중입니다. 새 플러그인이 완성되는 대로 이 목록에 추가할게요.</p>
+    </div>
+    <div class="products">
+
+      <!--
+        상품 카드 템플릿 — 새 플러그인을 추가할 때는 이 블록 전체를 복사해서
+        .products 안에 붙여넣고, 아이콘/배지/이름/설명/가격/링크만 바꾸면 됩니다.
+
+        판매중인 플러그인: class="product live" + badge.live "판매중" + 실제 상세 페이지 링크
+        준비중인 플러그인: class="product soon" + badge.soon "준비중" + 링크 대신 안내 문구
+
+        <div class="product live">
+          <div class="product-top">
+            <span class="product-icon">아이콘 이모지</span>
+            <span class="badge live">판매중</span>
+          </div>
+          <h3>플러그인 이름</h3>
+          <p>한두 문장으로 된 플러그인 설명.</p>
+          <div class="product-foot">
+            <span class="price">가격</span>
+            <a href="상세페이지.html" class="link">자세히 보기 →</a>
+          </div>
+        </div>
+      -->
+
+      <div class="product live">
+        <div class="product-top">
+          <span class="product-icon">🪙</span>
+          <span class="badge live">판매중</span>
+        </div>
+        <h3>myBTC</h3>
+        <p>Vault 기반 서버 경제에 가상 암호화폐·주식 거래 시스템을 더하는 플러그인. 한국어 완벽 지원.</p>
+        <div class="product-foot">
+          <span class="price">12,000원</span>
+          <a href="myBTC-landing.html" class="link">자세히 보기 →</a>
+        </div>
+      </div>
+
+      <div class="product soon">
+        <div class="product-top">
+          <span class="product-icon">🧩</span>
+          <span class="badge soon">준비중</span>
+        </div>
+        <h3>다음 작품</h3>
+        <p>새로운 플러그인을 심는 중입니다. 완성되면 가장 먼저 디스코드에서 소식을 알려드려요.</p>
+        <div class="product-foot">
+          <span class="price">TBD</span>
+          <span class="link">공개 예정</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">HOW TO BUY</div>
+      <h2>구매는 이렇게 진행돼요</h2>
+      <p>현재는 모든 플러그인이 같은 방식으로 판매됩니다.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-idx">01</div>
+        <div><h3>원하는 플러그인 페이지에서 가격 확인</h3><p>각 플러그인 상세 페이지에 결제 안내가 있습니다.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-idx">02</div>
+        <div><h3>안내된 방법으로 송금</h3><p>송금자명을 디스코드 닉네임으로 남겨주시면 확인이 빨라집니다.</p></div>
+      </div>
+      <div class="step">
+        <div class="step-idx">03</div>
+        <div><h3>디스코드에서 파일 수령</h3><p>입금 확인 후 DM으로 파일이 전달되고, 구매자 역할이 부여됩니다.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">WHY SEEDCRAFT</div>
+      <h2>작게 시작해서, 꾸준하게</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why">
+        <div class="tag">lang.kr</div>
+        <h3>한국어 우선</h3>
+        <p>한국 서버 운영자를 위해, 한국어로 먼저 만듭니다.</p>
+      </div>
+      <div class="why">
+        <div class="tag">support.direct</div>
+        <h3>직접 소통</h3>
+        <p>디스코드에서 개발자와 바로 이야기할 수 있습니다.</p>
+      </div>
+      <div class="why">
+        <div class="tag">grow.slow</div>
+        <h3>천천히, 확실하게</h3>
+        <p>하나를 제대로 만들고, 다음 씨앗을 심습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="cta-final">
+      <h2>SeedCraft 디스코드에서 만나요</h2>
+      <p>새 플러그인 소식, 업데이트, 지원까지 전부 여기서 이루어집니다.</p>
+      <!-- TODO: 디스코드 초대 링크를 여기에 넣어주세요 (예: https://discord.gg/xxxxxxx) -->
+      <a href="여기에_디스코드_초대_링크_입력" class="btn btn-primary">디스코드 참여하기 →</a>
+    </div>
+    <div class="foot-meta">
+      <span>🌱 SeedCraft</span>
+      <span>Sprout 봇이 안내를 도와드립니다</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
