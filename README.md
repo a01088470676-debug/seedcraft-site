@@ -8,7 +8,7 @@ SeedCraft 마인크래프트 플러그인 스토어의 정적 랜딩페이지 2�
 ## 채워야 할 placeholder
 
 - [x] 디스코드 초대 링크 (총 4곳) — `https://discord.gg/DduRkEY3XX` 반영 완료
-- [ ] `myBTC-landing.html`의 `[ 카카오페이 링크 또는 계좌번호를 여기에 입력하세요 ]` — 아직 미반영
+- [x] `myBTC-landing.html`의 결제 정보 — 계좌 정보 반영 완료
 
 ## 새 플러그인 추가하기
 
