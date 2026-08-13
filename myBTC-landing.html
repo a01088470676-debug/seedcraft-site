@@ -94,8 +94,8 @@
   .feature h3{ font-size:15px; font-weight:600; margin-bottom:6px; }
   .feature p{ color: var(--text-muted); font-size:13px; }
 
-  .shot-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
-  @media (max-width:700px){ .shot-grid{ grid-template-columns: repeat(2, 1fr); } }
+  .shot-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; }
+  @media (max-width:500px){ .shot-grid{ grid-template-columns: 1fr; } }
   .shot{
     height:220px; display:flex; align-items:center; justify-content:center;
     border-radius:10px; border:1px solid var(--line); background: var(--surface); padding:16px;
@@ -218,7 +218,6 @@
     </div>
     <div class="shot-grid">
       <div class="shot"><img src="screenshots/01-market-prices.png" alt="실시간 시세 갱신 화면" loading="lazy"></div>
-      <div class="shot"><img src="screenshots/05-command-menu.png" alt="명령어 메뉴" loading="lazy"></div>
       <div class="shot"><img src="screenshots/03-my-stocks.png" alt="내 주식 GUI" loading="lazy"></div>
       <div class="shot"><img src="screenshots/02-admin-menu.png" alt="관리자 메뉴 GUI" loading="lazy"></div>
       <div class="shot"><img src="screenshots/04-coin-balance.png" alt="보유 코인 확인" loading="lazy"></div>
