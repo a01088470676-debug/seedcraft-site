@@ -94,6 +94,10 @@
   .feature h3{ font-size:15px; font-weight:600; margin-bottom:6px; }
   .feature p{ color: var(--text-muted); font-size:13px; }
 
+  .shot-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+  @media (max-width:700px){ .shot-grid{ grid-template-columns: repeat(2, 1fr); } }
+  .shot-grid img{ width:100%; border-radius:10px; border:1px solid var(--line); background: var(--surface); display:block; }
+
   /* PURCHASE */
   .steps{ display:flex; flex-direction:column; margin-bottom:32px; }
   .step{ display:grid; grid-template-columns:64px 1fr; gap:20px; padding:22px 0; border-top:1px solid var(--line); }
@@ -168,25 +172,52 @@
     </div>
     <div class="features">
       <div class="feature">
+        <div class="icon">📊</div>
+        <h3>실시간 시세 갱신</h3>
+        <p>다이아몬드·철 광업, 밀 농업, 목재업, 어업, 축산업, 석재 채석업, 마법물약 연구소까지 다양한 산업의 시세가 실시간으로 오르내립니다.</p>
+      </div>
+      <div class="feature">
         <div class="icon">💹</div>
-        <h3>실시간 시세 변동</h3>
-        <p>가상 코인의 가격이 서버 내 거래량에 따라 자동으로 오르내립니다.</p>
+        <h3>코인 환율 변동</h3>
+        <p>코인 환율도 함께 변동해 매 순간 다른 시장을 경험할 수 있습니다.</p>
       </div>
       <div class="feature">
         <div class="icon">📈</div>
         <h3>주식 거래 시스템</h3>
-        <p>플레이어가 직접 주식을 사고팔며 서버 경제에 참여할 수 있습니다.</p>
+        <p>GUI로 내 주식 보유 현황을 한눈에 확인하고, 직접 사고팔며 서버 경제에 참여할 수 있습니다.</p>
       </div>
       <div class="feature">
-        <div class="icon">🧭</div>
-        <h3>Vault 완전 연동</h3>
-        <p>기존 서버의 화폐(Vault Economy)와 자연스럽게 함께 동작합니다.</p>
+        <div class="icon">⛏️</div>
+        <h3>채굴기 시스템</h3>
+        <p>채굴기를 구매·지급하고, 자동으로 자원을 채굴해 수익을 만들 수 있습니다.</p>
       </div>
       <div class="feature">
-        <div class="icon">🇰🇷</div>
-        <h3>한국어 완벽 지원</h3>
-        <p>명령어 안내, GUI, 에러 메시지까지 전부 한국어로 표시됩니다.</p>
+        <div class="icon">💵</div>
+        <h3>배당금 시스템</h3>
+        <p>보유 주식에 따라 배당금을 받을 수 있어, 장기 보유 전략도 가능합니다.</p>
       </div>
+      <div class="feature">
+        <div class="icon">🖱️</div>
+        <h3>직관적인 GUI</h3>
+        <p>명령어뿐 아니라 클릭 한 번으로 조작 가능한 관리자 메뉴와 인벤토리형 UI를 제공합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">SCREENSHOTS</div>
+      <h2>실제 플레이 화면</h2>
+      <p>인게임에서 이렇게 보입니다.</p>
+    </div>
+    <div class="shot-grid">
+      <img src="screenshots/01-market-prices.png" alt="실시간 시세 갱신 화면" loading="lazy">
+      <img src="screenshots/05-command-menu.png" alt="명령어 메뉴" loading="lazy">
+      <img src="screenshots/03-my-stocks.png" alt="내 주식 GUI" loading="lazy">
+      <img src="screenshots/02-admin-menu.png" alt="관리자 메뉴 GUI" loading="lazy">
+      <img src="screenshots/04-coin-balance.png" alt="보유 코인 확인" loading="lazy">
     </div>
   </div>
 </section>
